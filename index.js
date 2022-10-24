@@ -36,7 +36,7 @@ db.once('open', function () {
   console.log("!!!! Connected to db: " + uristring)
 });
 
-var registerSchema = new mongoose.Schema({
+var userSchema = new mongoose.Schema({
   username: String,
   password: String,
   occupation: String,
@@ -48,7 +48,7 @@ var registerSchema = new mongoose.Schema({
   imageName: String
 })
 
-var Resgiter = mongoose.model('Register', registerSchema);
+var User = mongoose.model('User', userSchema);
 
 if (typeof ipaddress === "undefined") {
   //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -91,25 +91,25 @@ app.post('/register', upload.single('fileData'), function (req, res) {
 
   //upload image
   var des_file = "resources/userImage/" + req.body.username
-  fs.readFile( url.fileURLToPath(req.body.imageUri) , function (err, data) {
-      fs.writeFile(des_file, data, function (err) {
-          if( err ){
-              console.log( err );
-          }else{
-              console.log("Success!");
-          }
-      });
+  fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
+    fs.writeFile(des_file, data, function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Success!");
+      }
+    });
   });
 
-  // Creating new Login.
-  var newUser = new Resgiter({
+  // Creating new user.
+  var newUser = new User({
     username: req.body.username,
     password: req.body.password,
     occupation: req.body.occupation,
     dateOfBirth: req.body.dateOfBirth,
     emailAddress: req.body.emailAddress,
     phoneNumber: req.body.phoneNumber,
-    imageUri: '/userImage/'+req.body.username,
+    imageUri: '/userImage/' + req.body.username,
     imageType: req.body.imageType,
     imageName: req.body.imageName
   });
@@ -117,8 +117,33 @@ app.post('/register', upload.single('fileData'), function (req, res) {
   // Create the new user and saving to db
   newUser.save(function (error, result) {
     // If there are any errors, pass them to next in the correct format
-    if (error) return next(new Error(JSON.stringify(error.errors)))
+    if (error) { console.log(error) }
     // Send the login if no issues
     res.send(201, result)
   })
+})
+
+//User Login
+app.get('/login', function (req, res, next) {
+  console.log("req.username="+req.query.username)
+  var collection = db.collection('User');
+  collection.findOne({}, function (err, user) {
+    if (err) throw err;
+    if (user)
+      console.log(user)
+    else
+      console.log("Not found")
+  });
+  // Find user by name
+  // Resgiter.find({ username: req.params.username }).exec(function (error, user) {
+  //   if (user) {
+  //     console.log("user info:"+user)
+  //     // Send the user
+  //     res.send(user)
+  //   } else {
+  //     console.log("user doesn't exist!")
+  //     // Send 404 header if the patient doesn't exist
+  //     res.send(404)
+  //   }
+  // })
 })
