@@ -4,7 +4,7 @@ var fs = require('fs');
 var multer = require('multer');
 const url = require('url');
 
-var upload = multer({ dest: 'uploads/' });
+var upload = multer({ dest: 'resources/userImage/' });
 var app = express();
 
 var bodyParser = require('body-parser')
@@ -90,7 +90,7 @@ app.post('/register', upload.single('fileData'), function (req, res) {
   }
 
   //upload image
-  var des_file = "userImage/" + req.body.username
+  var des_file = "resources/userImage/" + req.body.username
   fs.readFile( url.fileURLToPath(req.body.imageUri) , function (err, data) {
       fs.writeFile(des_file, data, function (err) {
           if( err ){
@@ -109,7 +109,7 @@ app.post('/register', upload.single('fileData'), function (req, res) {
     dateOfBirth: req.body.dateOfBirth,
     emailAddress: req.body.emailAddress,
     phoneNumber: req.body.phoneNumber,
-    imageUri: '/userImage/'+username,
+    imageUri: '/userImage/'+req.body.username,
     imageType: req.body.imageType,
     imageName: req.body.imageName
   });
