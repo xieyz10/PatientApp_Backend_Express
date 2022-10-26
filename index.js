@@ -17,7 +17,7 @@ var DEFAULT_PORT = 5000
 var DEFAULT_HOST = '127.0.0.1'
 var SERVER_NAME = 'patientApp'
 
-var http = require('http');
+// var http = require('http');
 var mongoose = require("mongoose");
 
 var port = process.env.PORT;
@@ -125,25 +125,16 @@ app.post('/register', upload.single('fileData'), function (req, res) {
 
 //User Login
 app.get('/login', function (req, res, next) {
-  console.log("req.username="+req.query.username)
-  var collection = db.collection('User');
-  collection.findOne({}, function (err, user) {
+  console.log("###############################################################################"+req.query.username)
+  var collection = db.collection('users');
+  collection.findOne({username: req.query.username }, function (err, user) {
     if (err) throw err;
-    if (user)
+    if (user){
       console.log(user)
+      // res.send(user)
+      res.json(user)
+    }
     else
-      console.log("Not found")
+      res.send(404)
   });
-  // Find user by name
-  // Resgiter.find({ username: req.params.username }).exec(function (error, user) {
-  //   if (user) {
-  //     console.log("user info:"+user)
-  //     // Send the user
-  //     res.send(user)
-  //   } else {
-  //     console.log("user doesn't exist!")
-  //     // Send 404 header if the patient doesn't exist
-  //     res.send(404)
-  //   }
-  // })
 })
