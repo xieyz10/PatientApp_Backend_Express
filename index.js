@@ -77,6 +77,8 @@ app.get('/', function (req, res) {
 
 //Register Part
 app.post('/register', upload.single('fileData'), function (req, res) {
+  // console.log("_dirnamee is:"+__dirname)
+  // console.log("filename is:"+__filename)
   console.log('POST request: login params=>' + JSON.stringify(req.params));
   console.log('POST request: login body=>' + JSON.stringify(req.body));
   // Make sure name is defined
@@ -90,7 +92,7 @@ app.post('/register', upload.single('fileData'), function (req, res) {
   }
 
   //upload image
-  var des_file = "resources/userImage/" + req.body.username
+  var des_file = "resources/userImage/" + req.body.username+'.jpg'
   fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
     fs.writeFile(des_file, data, function (err) {
       if (err) {
@@ -109,10 +111,12 @@ app.post('/register', upload.single('fileData'), function (req, res) {
     dateOfBirth: req.body.dateOfBirth,
     emailAddress: req.body.emailAddress,
     phoneNumber: req.body.phoneNumber,
-    imageUri: '/userImage/' + req.body.username,
+    imageUri: url.pathToFileURL(__dirname+"/resources/userImage/"+ req.body.username)+'.jpg',
     imageType: req.body.imageType,
     imageName: req.body.imageName
   });
+
+  console.log("newUser.imageuri is"+newUser.imageUri)
 
   // Create the new user and saving to db
   newUser.save(function (error, result) {
@@ -125,14 +129,13 @@ app.post('/register', upload.single('fileData'), function (req, res) {
 
 //User Login
 app.get('/login', function (req, res, next) {
-  console.log("###############################################################################"+req.query.username)
   var collection = db.collection('users');
-  collection.findOne({username: req.query.username }, function (err, user) {
+  collection.findOne({username: req.query.username, password:req.query.password }, function (err, user) {
     if (err) throw err;
     if (user){
       console.log(user)
       // res.send(user)
-      res.json(user)
+      res.json(200, user)
     }
     else
       res.send(404)
