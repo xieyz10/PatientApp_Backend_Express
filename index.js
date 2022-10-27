@@ -36,7 +36,7 @@ db.once('open', function () {
   console.log("!!!! Connected to db: " + uristring)
 });
 
-var userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   username: String,
   password: String,
   occupation: String,
@@ -48,7 +48,26 @@ var userSchema = new mongoose.Schema({
   imageName: String
 })
 
+const patientSchema = new mongoose.Schema({
+  username: String,
+  firstName: String,
+  lastName:String,
+  address:String,
+  dateOfBirth: String,
+  doctor: String,
+  sex: String,
+  phoneNumber:String,
+  emailAddress:String,
+  emergencyContact:String,
+  emergencyContactPhoneNumber:String,
+  bedNumber: String,
+  imageUri: String,
+  imageType: String,
+  imageName: String
+})
+
 var User = mongoose.model('User', userSchema);
+var Patient = mongoose.model('Patient', patientSchema);
 
 if (typeof ipaddress === "undefined") {
   //  Log errors on OpenShift but continue w/ 127.0.0.1 - this
@@ -75,8 +94,8 @@ app.get('/', function (req, res) {
   res.send('Hello World');
 })
 
-//Register Part
-app.post('/register', upload.single('fileData'), function (req, res) {
+//User Register
+app.post('/register', function (req, res) {
   // console.log("_dirnamee is:"+__dirname)
   // console.log("filename is:"+__filename)
   console.log('POST request: login params=>' + JSON.stringify(req.params));
@@ -120,6 +139,56 @@ app.post('/register', upload.single('fileData'), function (req, res) {
 
   // Create the new user and saving to db
   newUser.save(function (error, result) {
+    // If there are any errors, pass them to next in the correct format
+    if (error) { console.log(error) }
+    // Send the login if no issues
+    res.send(201, result)
+  })
+})
+
+//Create Patient
+app.post('/createPatient', function (req, res) {
+  // console.log("_dirnamee is:"+__dirname)
+  // console.log("filename is:"+__filename)
+  console.log('POST request: login params=>' + JSON.stringify(req.params));
+  console.log('POST request: login body=>' + JSON.stringify(req.body));
+  // Make sure name is defined
+  if (req.body.username === undefined) {
+    // If there are any errors, pass them to next in the correct format
+    throw new Error("username cannot be empty")
+  }
+  //upload image
+  var des_file = "resources/patientImage/" + req.body.username+'.jpg'
+  // fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
+  //   fs.writeFile(des_file, data, function (err) {
+  //     if (err) {
+  //       console.log(err);
+  //     } else {
+  //       console.log("Success!");
+  //     }
+  //   });
+  // });
+
+  // Creating new user.
+  var newPatient = new Patient({
+    username: req.body.username,
+    firstName: req.body.firstName,
+    lastName:req.body.lastName,
+    address:req.body.lastName,
+    dateOfBirth: req.body.lastName,
+    doctor: req.body.doctor,
+    sex: req.body.sex,
+    phoneNumber:req.body.phoneNumber,
+    emailAddress:req.body.emailAddress,
+    emergencyContact:req.body.emergencyContact,
+    emergencyContactPhoneNumber:req.body.emergencyContactPhoneNumber,
+    bedNumber: req.body.bedNumber,
+    // imageUri: url.pathToFileURL(__dirname+"/resources/patientImage/"+ req.body.username)+'.jpg',
+    imageType: req.body.imageType,
+    imageName: req.body.imageName,
+  });
+  // Create the new user and saving to db
+  newPatient.save(function (error, result) {
     // If there are any errors, pass them to next in the correct format
     if (error) { console.log(error) }
     // Send the login if no issues
