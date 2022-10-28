@@ -25,8 +25,8 @@ var ipaddress = process.env.IP;
 
 var uristring =
   process.env.MONGODB_URI ||
-  //'mongodb://127.0.0.1:27017/data';
-  'mongodb+srv://MAPD712PatientApp:AYEZGNZeFw9cclQk@cluster0.uzxamyj.mongodb.net/?retryWrites=true&w=majority'
+  'mongodb://127.0.0.1:27017/patientCareApp';
+  // 'mongodb+srv://MAPD712PatientApp:AYEZGNZeFw9cclQk@cluster0.uzxamyj.mongodb.net/?retryWrites=true&w=majority'
 
 mongoose.connect(uristring, { useNewUrlParser: true });
 const db = mongoose.connection;
@@ -49,12 +49,14 @@ const userSchema = new mongoose.Schema({
 })
 
 const patientSchema = new mongoose.Schema({
-  username: String,
+  patientName: String,
+  patientUserName:String,
   firstName: String,
   lastName:String,
   address:String,
   dateOfBirth: String,
-  doctor: String,
+  doctorName: String,
+  doctorID: String,
   sex: String,
   phoneNumber:String,
   emailAddress:String,
@@ -63,7 +65,7 @@ const patientSchema = new mongoose.Schema({
   bedNumber: String,
   imageUri: String,
   imageType: String,
-  imageName: String
+  imageName: String,
 })
 
 var User = mongoose.model('User', userSchema);
@@ -153,37 +155,39 @@ app.post('/createPatient', function (req, res) {
   console.log('POST request: login params=>' + JSON.stringify(req.params));
   console.log('POST request: login body=>' + JSON.stringify(req.body));
   // Make sure name is defined
-  if (req.body.username === undefined) {
+  if (req.body.patientUserName === undefined) {
     // If there are any errors, pass them to next in the correct format
     throw new Error("username cannot be empty")
   }
   //upload image
-  var des_file = "resources/patientImage/" + req.body.username+'.jpg'
-  // fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
-  //   fs.writeFile(des_file, data, function (err) {
-  //     if (err) {
-  //       console.log(err);
-  //     } else {
-  //       console.log("Success!");
-  //     }
-  //   });
-  // });
+  var des_file = "resources/patientImage/" + req.body.patientUserName+'.jpg'
+  fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
+    fs.writeFile(des_file, data, function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log("Success!");
+      }
+    });
+  });
 
   // Creating new user.
   var newPatient = new Patient({
-    username: req.body.username,
+    patientName: req.body.patientName,
+    patientUserName:req.body.patientUserName,
     firstName: req.body.firstName,
     lastName:req.body.lastName,
-    address:req.body.lastName,
-    dateOfBirth: req.body.lastName,
-    doctor: req.body.doctor,
+    address:req.body.address,
+    dateOfBirth: req.body.dateOfBirth,
+    doctorName: req.body.doctorName,
+    doctorID: req.body.doctorID,
     sex: req.body.sex,
     phoneNumber:req.body.phoneNumber,
     emailAddress:req.body.emailAddress,
     emergencyContact:req.body.emergencyContact,
     emergencyContactPhoneNumber:req.body.emergencyContactPhoneNumber,
     bedNumber: req.body.bedNumber,
-    // imageUri: url.pathToFileURL(__dirname+"/resources/patientImage/"+ req.body.username)+'.jpg',
+    imageUri: url.pathToFileURL(__dirname+"/resources/patientImage/"+ req.body.patientUserName)+'.jpg',
     imageType: req.body.imageType,
     imageName: req.body.imageName,
   });
@@ -208,5 +212,17 @@ app.get('/login', function (req, res, next) {
     }
     else
       res.send(404)
+  });
+})
+
+//find all patient by doctor ID
+app.get('/patients', function (req, res, next) {
+  var collection = db.collection('patients');
+  collection.find({doctorID: req.query.doctorID}).toArray(function (err, patients) {
+    if(patients){
+      res.json(200, patients)
+    }else{
+      res.send(404)
+    }
   });
 })
