@@ -215,7 +215,7 @@ app.get('/login', function (req, res, next) {
   });
 })
 
-//find all patient by doctor ID
+//find all patients by doctor ID
 app.get('/patients', function (req, res, next) {
   var collection = db.collection('patients');
   collection.find({doctorID: req.query.doctorID}).toArray(function (err, patients) {
