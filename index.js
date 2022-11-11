@@ -199,7 +199,6 @@ app.post('/createPatient', function (req, res) {
     emergencyContact:req.body.emergencyContact,
     emergencyContactPhoneNumber:req.body.emergencyContactPhoneNumber,
     bedNumber: req.body.bedNumber,
-    imageUri: url.pathToFileURL(__dirname+"/resources/patientImage/"+ req.body.patientUserName)+'.jpg',
     imageType: req.body.imageType,
     imageName: req.body.imageName,
   });
