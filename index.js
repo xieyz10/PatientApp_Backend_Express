@@ -6,14 +6,14 @@ const url = require('url');
 
 var upload = multer({ dest: 'resources/userImage/' });
 var app = express();
-
+app.set('port', (process.env.PORT || 5000));
 var bodyParser = require('body-parser')
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
-var DEFAULT_PORT = 5000
+// var DEFAULT_PORT = 5000
 var DEFAULT_HOST = '127.0.0.1'
 var SERVER_NAME = 'patientApp'
 
@@ -91,12 +91,12 @@ if (typeof ipaddress === "undefined") {
   ipaddress = DEFAULT_HOST;
 };
 
-if (typeof port === "undefined") {
-  console.warn('No process.env.PORT var, using default port: ' + DEFAULT_PORT);
-  port = DEFAULT_PORT;
-};
+// if (typeof port === "undefined") {
+//   console.warn('No process.env.PORT var, using default port: ' + DEFAULT_PORT);
+//   port = DEFAULT_PORT;
+// };
 
-var server = app.listen(5000, function () { //port 5000
+var server = app.listen(app.get('port'), function () { //port 5000
 
   var host = server.address().address
   var port = server.address().port
