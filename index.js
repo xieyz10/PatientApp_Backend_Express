@@ -6,14 +6,14 @@ const url = require('url');
 
 var upload = multer({ dest: 'resources/userImage/' });
 var app = express();
-
+app.set('port', (process.env.PORT || 5000));
 var bodyParser = require('body-parser')
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
-var DEFAULT_PORT = 5000
+// var DEFAULT_PORT = 5000
 var DEFAULT_HOST = '127.0.0.1'
 var SERVER_NAME = 'patientApp'
 
@@ -25,8 +25,13 @@ var ipaddress = process.env.IP;
 
 var uristring =
   process.env.MONGODB_URI ||
+<<<<<<< HEAD
   'mongodb://127.0.0.1:27017/patientCareApp';
   // 'mongodb+srv://MAPD712PatientApp:AYEZGNZeFw9cclQk@cluster0.uzxamyj.mongodb.net/?retryWrites=true&w=majority'
+=======
+  //'mongodb://127.0.0.1:27017/patientCareApp';
+  'mongodb+srv://MAPD712PatientApp:AYEZGNZeFw9cclQk@cluster0.uzxamyj.mongodb.net/?retryWrites=true&w=majority'
+>>>>>>> 44e5cb921b305a79bf31f7e4d486529267876a45
 
 mongoose.connect(uristring, { useNewUrlParser: true });
 const db = mongoose.connection;
@@ -91,12 +96,12 @@ if (typeof ipaddress === "undefined") {
   ipaddress = DEFAULT_HOST;
 };
 
-if (typeof port === "undefined") {
-  console.warn('No process.env.PORT var, using default port: ' + DEFAULT_PORT);
-  port = DEFAULT_PORT;
-};
+// if (typeof port === "undefined") {
+//   console.warn('No process.env.PORT var, using default port: ' + DEFAULT_PORT);
+//   port = DEFAULT_PORT;
+// };
 
-var server = app.listen(5000, function () { //port 5000
+var server = app.listen(app.get('port'), function () { //port 5000
 
   var host = server.address().address
   var port = server.address().port
@@ -172,17 +177,6 @@ app.post('/createPatient', function (req, res) {
     // If there are any errors, pass them to next in the correct format
     throw new Error("username cannot be empty")
   }
-  //upload image
-  var des_file = "resources/patientImage/" + req.body.patientUserName+'.jpg'
-  fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
-    fs.writeFile(des_file, data, function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Success!");
-      }
-    });
-  });
 
   // Creating new user.
   var newPatient = new Patient({
@@ -199,7 +193,6 @@ app.post('/createPatient', function (req, res) {
     emergencyContact:req.body.emergencyContact,
     emergencyContactPhoneNumber:req.body.emergencyContactPhoneNumber,
     bedNumber: req.body.bedNumber,
-    imageUri: url.pathToFileURL(__dirname+"/resources/patientImage/"+ req.body.patientUserName)+'.jpg',
     imageType: req.body.imageType,
     imageName: req.body.imageName,
   });
