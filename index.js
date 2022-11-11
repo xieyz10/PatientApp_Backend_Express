@@ -172,17 +172,6 @@ app.post('/createPatient', function (req, res) {
     // If there are any errors, pass them to next in the correct format
     throw new Error("username cannot be empty")
   }
-  //upload image
-  var des_file = "resources/patientImage/" + req.body.patientUserName+'.jpg'
-  fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
-    fs.writeFile(des_file, data, function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Success!");
-      }
-    });
-  });
 
   // Creating new user.
   var newPatient = new Patient({
