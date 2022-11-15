@@ -25,13 +25,9 @@ var ipaddress = process.env.IP;
 
 var uristring =
   process.env.MONGODB_URI ||
-<<<<<<< HEAD
-  'mongodb://127.0.0.1:27017/patientCareApp';
-  // 'mongodb+srv://MAPD712PatientApp:AYEZGNZeFw9cclQk@cluster0.uzxamyj.mongodb.net/?retryWrites=true&w=majority'
-=======
-  //'mongodb://127.0.0.1:27017/patientCareApp';
+  // 'mongodb://127.0.0.1:27017/patientCareApp';
   'mongodb+srv://MAPD712PatientApp:AYEZGNZeFw9cclQk@cluster0.uzxamyj.mongodb.net/?retryWrites=true&w=majority'
->>>>>>> 44e5cb921b305a79bf31f7e4d486529267876a45
+
 
 mongoose.connect(uristring, { useNewUrlParser: true });
 const db = mongoose.connection;
