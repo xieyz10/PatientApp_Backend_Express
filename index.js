@@ -66,6 +66,10 @@ const patientSchema = new mongoose.Schema({
   imageUri: String,
   imageType: String,
   imageName: String,
+  bloodPressure:String,
+  respiratoryRate:String,
+  bloodOxygenLevel:String,
+  heartbeatRate:String
 })
 
 const appointmentSchema = new mongoose.Schema({
@@ -80,6 +84,8 @@ const appointmentSchema = new mongoose.Schema({
   imageType: String,
   imageName: String,
 })
+
+
 
 var User = mongoose.model('User', userSchema);
 var Patient = mongoose.model('Patient', patientSchema);
@@ -175,7 +181,7 @@ app.post('/createPatient', function (req, res) {
   }
 
   //upload image
-  var des_file = "resources/patientImage/" + req.body.patientName + '.jpg'
+  var des_file = "resources/patientImage/" + req.body.patientUserName + '.jpg'
   fs.readFile(url.fileURLToPath(req.body.imageUri), function (err, data) {
     fs.writeFile(des_file, data, function (err) {
       if (err) {
@@ -204,6 +210,10 @@ app.post('/createPatient', function (req, res) {
     imageUri: url.pathToFileURL(__dirname + "/resources/patientImage/" + req.body.patientUserName) + '.jpg',
     imageType: req.body.imageType,
     imageName: req.body.imageName,
+    bloodPressure: req.body.bloodPressure,
+    respiratoryRate: req.body.respiratoryRate,
+    bloodOxygenLevel: req.body.bloodOxygenLevel,
+    heartbeatRate: req.body.heartbeatRate,
   });
 
 
@@ -300,3 +310,44 @@ app.get('/appointments', function (req, res, next) {
     }
   });
 })
+
+// const clinicalDataSchema= new mongoose.Schema({
+//   patientId:String,
+//   bloodPressure : String,
+//   respiratoryRate: String,
+//   bloodOxygenLevel : String,
+//   heartbeatRate: String,
+// })
+
+// app.post('/createClinicalData', function (req, res) {
+//   // Creating new user.
+//   var newClinicalData = new ClinicalData({
+//     patientId: req.body.patientId,
+//     bloodPressure: req.body.bloodPressure,
+//     respiratoryRate: req.body.respiratoryRate,
+//     bloodOxygenLevel: req.body.bloodOxygenLevel,
+//     heartbeatRate: req.body.heartbeatRate,
+//   });
+
+//   // Create the new user and saving to db
+//   newClinicalData.save(function (error, result) {
+//     // If there are any errors, pass them to next in the correct format
+//     if (error) { console.log(error) }
+//     // Send the login if no issues
+//     res.send(201, result)
+//   })
+// })
+
+// //find clinical data by patientId
+// app.get('/clinicalData', function (req, res, next) {
+//   var collection = db.collection('clinicalDatas');
+//   collection.find({ patientId: req.query.patientId }).toArray(function (err, data) {
+//     if (data) {
+//       res.json(200, data)
+//     } else {
+//       res.send(404)
+//     }
+//   });
+// })
+
+
