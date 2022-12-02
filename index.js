@@ -277,8 +277,7 @@ app.get('/patient', function (req, res, next) {
 
 app.get('/name', function (req, res, next) {
   var collection = db.collection('patients');
-  console.log(req.query.patientName)
-  collection.find({ firstName: req.query.patientName}).toArray(function (err, patients) {
+  collection.find({ doctorID: req.query.doctorID, firstName: req.query.patientName}).toArray(function (err, patients) {
     if (patients) {
       res.json(200, patients)
     } else {
