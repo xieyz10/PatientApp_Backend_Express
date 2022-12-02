@@ -25,8 +25,8 @@ var ipaddress = process.env.IP;
 
 var uristring =
   process.env.MONGODB_URI ||
-  // 'mongodb://127.0.0.1:27017/patientCareApp';
-'mongodb+srv://MAPD712PatientApp:AYEZGNZeFw9cclQk@cluster0.uzxamyj.mongodb.net/?retryWrites=true&w=majority'
+  'mongodb://127.0.0.1:27017/patientCareApp';
+// 'mongodb+srv://MAPD712PatientApp:AYEZGNZeFw9cclQk@cluster0.uzxamyj.mongodb.net/?retryWrites=true&w=majority'
 
 
 mongoose.connect(uristring, { useNewUrlParser: true });
@@ -269,6 +269,18 @@ app.get('/patient', function (req, res, next) {
   collection.find({ _id: objectId}).toArray(function (err, patient) {
     if (patient) {
       res.json(200, patient)
+    } else {
+      res.send(404)
+    }
+  });
+})
+
+app.get('/name', function (req, res, next) {
+  var collection = db.collection('patients');
+  console.log(req.query.patientName)
+  collection.find({ firstName: req.query.patientName}).toArray(function (err, patients) {
+    if (patients) {
+      res.json(200, patients)
     } else {
       res.send(404)
     }
